@@ -45,11 +45,13 @@ export const removeBook = (req: Request, res: Response) => {
 };
 
 export const getAllBooks = (req: Request, res: Response) => {
-  Book.find().then(docs => {
-    res.send({ docs });
-  }).catch(e => {
-      res.send({error: e})
-  });
+  Book.find()
+    .then(docs => {
+      res.send({ docs });
+    })
+    .catch(e => {
+      res.send({ error: e });
+    });
 };
 
 export const updateBook = (req: Request, res: Response) => {
@@ -59,10 +61,15 @@ export const updateBook = (req: Request, res: Response) => {
   if (!req.body)
     return res.status(422).send({ error: "must supply update parameters" });
   let updateParams: UpdateParams = req.body;
-  
-  Book.findByIdAndUpdate(id, updateParams).then(doc => {
-      Book.findById(id).then(doc => res.send({doc}))
-  }).catch(e => {
-      res.send({error: e})
-  })
+  if (!updateParams.currentPage && !updateParams.url)
+    return res
+      .status(422)
+      .send({ error: "must send at least a url or currentPage" });
+  Book.findByIdAndUpdate(id, updateParams)
+    .then(doc => {
+      Book.findById(id).then(doc => res.send({ doc }));
+    })
+    .catch(e => {
+      res.send({ error: e });
+    });
 };

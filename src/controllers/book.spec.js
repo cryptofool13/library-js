@@ -117,7 +117,14 @@ describe("book controller)", () => {
     expect(updated.url).toEqual('qwerty')
   });
 
-  it("should reject update with improper arguments", async () => {});
+  it("should reject update with improper arguments", async () => {
+    let badUpdateParams = {unsupported: 'parameter', other: 'unsupported parameter'}
+    const res = await request(app)
+    .post(`/library/${new ObjectId("5da780eebd37a52c192f4d0d")}`)
+    .send(badUpdateParams);
+    
+    expect(res.status).toEqual(422)
+  });
 
   it("should remove a book", async () => {
     const res = await request(app).delete(
