@@ -4,6 +4,7 @@ export type BookDocument = mongoose.Document & {
   title: string;
   author: string;
   pageCount: number;
+  currentPage: number;
   medium: string;
   genre: string;
 };
@@ -11,12 +12,20 @@ export type BookDocument = mongoose.Document & {
 const bookSchema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },
   author: { type: String, required: true },
-  pageCount: Number,
+  pageCount: { type: Number, required: true },
+  currentPage: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   medium: {
     type: String,
     required: true,
   },
-  genre: String,
+  genre: {
+    type: String,
+    required: true,
+  },
   url: String,
 });
 

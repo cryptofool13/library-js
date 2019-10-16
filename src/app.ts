@@ -33,6 +33,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("ayo");
 });
+app.get("/library", bookController.getAllBooks);
 app.post("/library", bookController.addBook);
 app.delete("/library/:id", bookController.removeBook);
+app.post("/library/:id", bookController.updateBook);
+
 export { app };

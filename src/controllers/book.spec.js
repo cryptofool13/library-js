@@ -18,12 +18,16 @@ describe("book controller)", () => {
       title: "test-book",
       author: "test-author",
       medium: "physical",
+      pageCount: 420,
+      genre: "sci-fi",
     });
     await book.insertOne({
-      _id: new ObjectId('0'),
+      _id: new ObjectId("5da780eebd37a52c192f4d0d"),
       title: "remove me",
       author: "mike",
       medium: "digital",
+      pageCount: 69,
+      genre: "comedy",
     });
   });
 
@@ -66,6 +70,8 @@ describe("book controller)", () => {
         title: "test-book200",
         author: "test-author",
         medium: "physical",
+        pageCount: 123,
+        genre: "how-to",
       });
     expect(res.status).toEqual(200);
   });
@@ -73,7 +79,13 @@ describe("book controller)", () => {
   it("should reject duplicate copies", async () => {
     const res = await request(app)
       .post("/library")
-      .send({ title: "test-book", author: "test-author", medium: "physical" });
+      .send({
+        title: "test-book",
+        author: "test-author",
+        medium: "physical",
+        pageCount: 420,
+        genre: "sci-fi",
+      });
     expect(res.body).toHaveProperty("error");
     expect(res.body.error).toEqual({
       code: 11000,
@@ -87,11 +99,32 @@ describe("book controller)", () => {
     });
   });
 
-  it("should remove a book", async () => {
+  it("should return array of books", async () => {
+    const res = await request(app).get("/library");
+
+    expect(res.body.docs).toHaveLength(3);
+  });
+
+  it("should update a book with proper arguments", async () => {
     const res = await request(app)
-      .delete(`library/${new ObjectId('0')}`)
-      .send();
+      .post(`/library/${new ObjectId("5da780eebd37a52c192f4d0d")}`)
+      .send({ currentPage: 20, url: 'qwerty' });
+    
+    const updated = await book.findOne({_id: new ObjectId("5da780eebd37a52c192f4d0d")})
+    
+    // console.log(updated)
+    expect(updated.currentPage).toEqual(20)
+    expect(updated.url).toEqual('qwerty')
+  });
+
+  it("should reject update with improper arguments", async () => {});
+
+  it("should remove a book", async () => {
+    const res = await request(app).delete(
+      `/library/${new ObjectId("5da780eebd37a52c192f4d0d")}`
+    );
+
     let removed = await book.findOne({ title: "remove me" });
-    expect(removed).toBeUndefined();
+    expect(removed).toBeNull();
   });
 });

@@ -2,11 +2,6 @@ const request = require("supertest");
 const { MongoClient } = require("mongodb");
 const { app } = require("../dist/app");
 
-// afterEach(() => {
-//   Book.findOneAndDelete({ title: "test-book" });
-//   //
-// });
-
 describe("app.get('/')", () => {
   it("should return string `ayo`", async () => {
     const res = await request(app).get("/");
